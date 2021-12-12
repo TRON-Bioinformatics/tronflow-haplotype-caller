@@ -3,7 +3,7 @@ params.cpus_filter = 2
 params.output = 'output'
 params.dbsnp = false
 params.hapmap = false
-params._1000g = false
+params.thousand_genomes = false
 
 
 process VARIANT_ANNOTATOR {
@@ -52,7 +52,7 @@ process VARIANT_RECALIBRATOR {
     --reference ${params.reference} \
     --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ${params.dbsnp} \
     --resource:hapmap,known=false,training=true,truth=true,prior=15.0 ${params.hapmap} \
-    --resource:1000G,known=false,training=true,truth=false,prior=10.0 ${params._1000g} \
+    --resource:1000G,known=false,training=true,truth=false,prior=10.0 ${params.thousand_genomes} \
     --variant ${vcf} \
     -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \
     --mode BOTH \

@@ -45,7 +45,8 @@ process VARIANT_RECALIBRATOR {
     tuple val(name), file(vcf)
 
     output:
-    tuple val("${name}"), file(vcf), file("output.tranches"), file("${name}.recalibrated.vcf"), emit: recalibration
+    tuple val("${name}"), file(vcf), file("output.tranches"), file("${name}.recalibrated.vcf"),
+        file("${name}.recalibrated.vcf.idx"), emit: recalibration
 
     """
     gatk --java-options '-Xmx${params.memory_filter}' VariantRecalibrator \
@@ -70,7 +71,7 @@ process VQSR {
     conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
 
     input:
-    tuple val(name), file(vcf), file(tranches_file), file(recalibration_file)
+    tuple val(name), file(vcf), file(tranches_file), file(recalibration_file), file(index)
 
     output:
     tuple val("${name}"), file("${name}.hc.vcf"), emit: final_vcfs

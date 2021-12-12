@@ -80,7 +80,7 @@ process VQSR {
    --reference ${params.reference} \
    --variant ${vcf} \
    --output ${name}.hc.vcf \
-   --truth-sensitivity_filter_level 99.0 \
+   --truth-sensitivity-filter-level 99.0 \
    --tranches-file ${tranches_file} \
    --recal-file ${recalibration_file} \
    --mode BOTH

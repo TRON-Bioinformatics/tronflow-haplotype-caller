@@ -34,9 +34,19 @@ if (!params.reference) {
     log.error "--reference is required"
     exit 1
 }
-if (!params.dbsnp) {
-    log.error "--dbsnp is required"
-    exit 1
+if (!params.skip_vqsr) {
+    if (!params.dbsnp) {
+        log.error "--dbsnp is required"
+        exit 1
+    }
+    if (!params.hapmap) {
+        log.error "--hapmap is required"
+        exit 1
+    }
+    if (!params.thousand_genomes) {
+        log.error "--thousand_genomes is required"
+        exit 1
+    }
 }
 
 // checks required inputs

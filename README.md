@@ -53,11 +53,13 @@ Input:
     name1	bam_file
     name2	bam_file_2
     * reference: path to the FASTA genome reference (indexes expected *.fai, *.dict)
-    * dbsnp: path to the dbSNP resource
-    * thousand_genomes: path to the 1000 genomes + Omni resource as provided in the GATK bundle
-    * hapmap: path to the HapMap resource as provided in the GATK bundle
+    * dbsnp: path to the dbSNP resource (not required if --skip_vqsr)
+    * thousand_genomes: path to the 1000 genomes + Omni resource as provided in the GATK bundle (not required if --skip_vqsr)
+    * hapmap: path to the HapMap resource as provided in the GATK bundle (not required if --skip_vqsr)
 
 Optional input:
+    * ploidy: use this parameter to provide the ploidy of the sample (default: 2)
+    * skip_vqsr: skips the Variant Quality Score Recalibration. The variant calls have higher quality but it requires resources not available for all organisms
     * intervals: path to a BED file containing the regions to analyse
     * output: the folder where to publish output
     * memory_haplotype_caller: the ammount of memory used by HaplotypeCaller (default: 16g)
@@ -69,3 +71,13 @@ Output:
     * Output VCF
     * Other intermediate files
 ```
+
+### Input tables
+
+The table with BAM files expects two tab-separated columns without a header.
+Multiple normal BAMs can be provided separated by commas.
+
+| Sample name          |  Normal BAMs                  |
+|----------------------|---------------------------------|
+| sample_1             | /path/to/sample_1_normal.bam   |
+| sample_2             | /path/to/sample_2_normal.bam,/path/to/sample_2_normal_2.bam   |

@@ -14,3 +14,6 @@ clean:
 
 test:
 	bash tests/test_00.sh
+	bash tests/test_01.sh
+	bash tests/test_02.sh
+	bash tests/test_03.sh

@@ -3,6 +3,7 @@ params.cpus__haplotype_caller = 2
 params.dbsnp = false
 params.reference = false
 params.intervals = false
+params.ploidy = 2
 
 
 process HAPLOTYPE_CALLER {
@@ -10,7 +11,7 @@ process HAPLOTYPE_CALLER {
     memory params.memory_haplotype_caller
     tag "${name}"
 
-    conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
+    conda (params.enable_conda ? "bioconda::gatk4=4.2.6.1" : null)
 
     input:
     tuple val(name), val(bam)
@@ -25,6 +26,7 @@ process HAPLOTYPE_CALLER {
     """
     gatk --java-options '-Xmx${params.memory__haplotype_caller}' HaplotypeCaller \
     --reference ${params.reference} \
+    --sample-ploidy ${params.ploidy} \
     ${intervals_option} \
     ${dbsnp_option} \
     ${inputs} \

@@ -3,6 +3,7 @@ params.cpus__haplotype_caller = 2
 params.dbsnp = false
 params.reference = false
 params.intervals = false
+params.ploidy = 2
 
 
 process HAPLOTYPE_CALLER {
@@ -25,6 +26,7 @@ process HAPLOTYPE_CALLER {
     """
     gatk --java-options '-Xmx${params.memory__haplotype_caller}' HaplotypeCaller \
     --reference ${params.reference} \
+    --sample-ploidy ${params.ploidy} \
     ${intervals_option} \
     ${dbsnp_option} \
     ${inputs} \

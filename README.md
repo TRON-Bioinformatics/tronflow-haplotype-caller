@@ -58,6 +58,7 @@ Input:
     * hapmap: path to the HapMap resource as provided in the GATK bundle (not required if --skip_vqsr)
 
 Optional input:
+    * ploidy: use this parameter to provide the ploidy of the sample (default: 2)
     * skip_vqsr: skips the Variant Quality Score Recalibration. The variant calls have higher quality but it requires resources not available for all organisms
     * intervals: path to a BED file containing the regions to analyse
     * output: the folder where to publish output

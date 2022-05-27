@@ -20,10 +20,12 @@ process VARIANT_ANNOTATOR {
     output:
     tuple val("${name}"), file("${name}.annotated.vcf"), emit: annotated_vcfs
 
+    script:
+    inputs = bam.split(",").collect({v -> "--input $v"}).join(" ")
     """
     gatk --java-options '-Xmx${params.memory_filter}' VariantAnnotator \
    --reference ${params.reference} \
-   --input ${bam} \
+   ${inputs} \
    --variant ${vcf} \
    --annotation QualByDepth \
    --annotation MappingQuality \

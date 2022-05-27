@@ -10,8 +10,9 @@ process VARIANT_ANNOTATOR {
     cpus params.cpus_filter
     memory params.memory_filter
     tag "${name}"
+    publishDir params.skip_vqsr? "${params.output}/${name}" : "", mode: "copy"
 
-    conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
+    conda (params.enable_conda ? "bioconda::gatk4=4.2.6.1" : null)
 
     input:
     tuple val(name), file(vcf), val(bam)
@@ -39,7 +40,7 @@ process VARIANT_RECALIBRATOR {
     memory params.memory_filter
     tag "${name}"
 
-    conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
+    conda (params.enable_conda ? "bioconda::gatk4=4.2.6.1" : null)
 
     input:
     tuple val(name), file(vcf)

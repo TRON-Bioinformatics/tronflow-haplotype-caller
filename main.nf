@@ -19,6 +19,7 @@ params.memory_cnn_score_variants = "16g"
 params.cpus_cnn_score_variants = 2
 params.memory_filter_variant_tranches = "16g"
 params.cpus_filter_variant_tranches = 2
+params.skip_vqsr = false
 
 
 def helpMessage() {
@@ -52,13 +53,15 @@ if (params.input_files) {
 workflow {
     HAPLOTYPE_CALLER(input_files)
     VARIANT_ANNOTATOR(HAPLOTYPE_CALLER.out.unfiltered_vcfs)
-    VARIANT_RECALIBRATOR(VARIANT_ANNOTATOR.out.annotated_vcfs)
-    VQSR(VARIANT_RECALIBRATOR.out.recalibration)
 
-    //CNN_WRITE_TENSORS(HAPLOTYPE_CALLER.out.unfiltered_vcfs)
-    //CNN_VARIANT_TRAIN(CNN_WRITE_TENSORS.out.cnn_tensor_folder)
-    //CNN_SCORE_VARIANTS(HAPLOTYPE_CALLER.out.unfiltered_vcfs)
-    //FILTER_VARIANT_TRANCHES(CNN_SCORE_VARIANTS.out.cnn_annotated_vcfs)
+    if (! params.skip_vqsr) {
+        VARIANT_RECALIBRATOR(VARIANT_ANNOTATOR.out.annotated_vcfs)
+        VQSR(VARIANT_RECALIBRATOR.out.recalibration)
+        final_vcfs = VQSR.out.final_vcfs
+    }
+    else {
+        final_vcfs = VARIANT_ANNOTATOR.out.annotated_vcfs
+    }
 
-    VQSR.out.final_vcfs.map {it.join("\t")}.collectFile(name: "${params.output}/hc_output_files.txt", newLine: true)
+    final_vcfs.map {it.join("\t")}.collectFile(name: "${params.output}/hc_output_files.txt", newLine: true)
 }

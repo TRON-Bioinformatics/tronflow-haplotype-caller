@@ -10,7 +10,7 @@ process HAPLOTYPE_CALLER {
     memory params.memory_haplotype_caller
     tag "${name}"
 
-    conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
+    conda (params.enable_conda ? "bioconda::gatk4=4.2.6.1" : null)
 
     input:
     tuple val(name), val(bam)

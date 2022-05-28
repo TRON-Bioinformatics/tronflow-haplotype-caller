@@ -4,6 +4,11 @@ params.output = 'output'
 params.dbsnp = false
 params.hapmap = false
 params.thousand_genomes = false
+params.memory_cnn_score_variants = "16g"
+params.cpus_cnn_score_variants = 2
+params.memory_filter_variant_tranches = "16g"
+params.cpus_filter_variant_tranches = 2
+
 
 
 process VARIANT_ANNOTATOR {

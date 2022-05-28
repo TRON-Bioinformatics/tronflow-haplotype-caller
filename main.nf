@@ -7,16 +7,14 @@ include { VARIANT_ANNOTATOR; VARIANT_RECALIBRATOR; VQSR } from './modules/02_vqs
 
 params.help= false
 params.input_files = false
+params.input_bam = false
+params.input_name = false
 params.reference = false
 params.dbsnp = false
 params.hapmap = false
 params.thousand_genomes = false
 params.intervals = false
 params.output = 'output'
-params.memory_cnn_score_variants = "16g"
-params.cpus_cnn_score_variants = 2
-params.memory_filter_variant_tranches = "16g"
-params.cpus_filter_variant_tranches = 2
 params.skip_vqsr = false
 
 
@@ -53,6 +51,10 @@ if (params.input_files) {
     .fromPath(params.input_files)
     .splitCsv(header: ['name', 'bam'], sep: "\t")
     .map{ row-> tuple(row.name, row.bam) }
+    .set { input_files }
+} else if (params.bam && params.name) {
+  Channel
+    .fromList([tuple(params.input_name, input_bam)])
     .set { input_files }
 } else {
   exit 1, "Input file not specified!"

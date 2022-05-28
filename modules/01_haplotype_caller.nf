@@ -4,6 +4,8 @@ params.dbsnp = false
 params.reference = false
 params.intervals = false
 params.ploidy = 2
+params.memory_haplotype_caller = "16g"
+params.cpus_haplotype_caller = 2
 
 
 process HAPLOTYPE_CALLER {

@@ -2,6 +2,7 @@
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/tron-bioinformatics/tronflow-haplotype-caller?sort=semver)
 [![Run tests](https://github.com/TRON-Bioinformatics/tronflow-haplotype-caller/actions/workflows/automated_tests.yml/badge.svg?branch=master)](https://github.com/TRON-Bioinformatics/tronflow-haplotype-caller/actions/workflows/automated_tests.yml)
+[![DOI](https://zenodo.org/badge/437462852.svg)](https://zenodo.org/badge/latestdoi/437462852)
 [![License](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)
 [![Powered by Nextflow](https://img.shields.io/badge/powered%20by-Nextflow-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://www.nextflow.io/)
 
@@ -58,6 +59,8 @@ Input:
     * hapmap: path to the HapMap resource as provided in the GATK bundle (not required if --skip_vqsr)
 
 Optional input:
+    * input_bam: the one or more comma separated BAM files (alternative input to --input_files)
+    * input_name: the sample name (alternative input to --input_files)
     * ploidy: use this parameter to provide the ploidy of the sample (default: 2)
     * skip_vqsr: skips the Variant Quality Score Recalibration. The variant calls have higher quality but it requires resources not available for all organisms
     * intervals: path to a BED file containing the regions to analyse

@@ -52,9 +52,9 @@ if (params.input_files) {
     .splitCsv(header: ['name', 'bam'], sep: "\t")
     .map{ row-> tuple(row.name, row.bam) }
     .set { input_files }
-} else if (params.bam && params.name) {
+} else if (params.input_bam && params.input_name) {
   Channel
-    .fromList([tuple(params.input_name, input_bam)])
+    .fromList([tuple(params.input_name, params.input_bam)])
     .set { input_files }
 } else {
   exit 1, "Input file not specified!"

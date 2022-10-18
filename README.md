@@ -14,7 +14,20 @@ Find the documentation here [![Documentation Status](https://readthedocs.org/pro
 
 This workflow implements the HaplotypeCaller best practices for a single sample as described here 
 https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-. 
-We do not use the experimental approach for filtering variants based on CNN, but instead the traditional approach.
+The only exception is that by default we exclude soft clipped bases, this behaviour can be reverted using `--use_soft_clipped_bases`.
+
+There are two steps:
+- Variant calling with the HaplotypeCaller
+- Variant filtering
+
+For the variant filtering there are two different approaches in place.
+
+When the resources for dbSNP, the 1000 Genomes Project results and HapMap are provided the we perform the traditional Variant Quality Score Recalibration approach. 
+
+Alternatively, if `--skip_vqsr` is passed then a set of hard filters are applied. 
+The default values for these filters are tuned for variant calling on RNA as described in (Brouard & Bissonnette, 2022).
+The default values can be changed with `--indels_hard_filters` and `--snvs_hard_filters`.
+
 
 
 ## How to run it
@@ -36,6 +49,15 @@ nextflow main.nf -profile conda --input_files $input --reference $reference \
 --thousand_genomes 1000g.vcf \
 --hapmap hapmap.vcf
 ```
+
+For variant calling on RNA use the following parameters:
+```
+nextflow run tron-bioinformatics/tronflow-haplotype-caller -r v0.1.0 -profile conda --input_files $input \
+--reference $reference \
+--skip_vqsr \
+--min_quality 20
+```
+
 
 Find the help as follows:
 ```
@@ -69,6 +91,10 @@ Optional input:
     * cpus_haplotype_caller: the number of CPUs used by HaplotypeCaller (default: 2)
     * memory_filter: the ammount of memory used by the filter pipeline (default: 16g)
     * cpus_filter: the number of CPUs used by the filter pipeline (default: 2)
+    * min_quality: minimum HaplotypeCaller Phred confidence to emit a call (default: no filter)
+    * use_soft_clipped_bases: enable the use of soft clipped bases
+    * indels_hard_filters: when --skip_vqsr these hard filters are applied over indel calls (default: --cluster-window-size 35 --cluster-size 3 -filter "QD < 2.0" -filter-name "QD2" -filter "FS > 30.0" -filter-name "FS30" -filter "ReadPosRankSum < -20.0" -filter-name "ReadPosRankSum-20" )
+    * snvs_hard_filters: when --skip_vqsr these hard filters are applied over SNV calls (default: --cluster-window-size 35 --cluster-size 3 -filter "QD < 2.0" -filter-name "QD2" -filter "FS > 30.0" -filter-name "FS30" -filter "SOR > 3.0" -filter-name "SOR3" -filter "MQ < 40.0" -filter-name "MQ40" -filter "MQRankSum < -12.5" -filter-name "MQRankSum-12.5" -filter "ReadPosRankSum < -8.0" -filter-name "ReadPosRankSum-8" )
 
 Output:
     * Output VCF
@@ -84,3 +110,9 @@ Multiple normal BAMs can be provided separated by commas.
 |----------------------|---------------------------------|
 | sample_1             | /path/to/sample_1_normal.bam   |
 | sample_2             | /path/to/sample_2_normal.bam,/path/to/sample_2_normal_2.bam   |
+
+
+## References
+
+- Brouard, JS., Bissonnette, N. (2022). Variant Calling from RNA-seq Data Using the GATK Joint Genotyping Workflow. In: Ng, C., Piscuoglio, S. (eds) Variant Calling. Methods in Molecular Biology, vol 2493. Humana, New York, NY. https://doi.org/10.1007/978-1-0716-2293-3_13
+- RNAseq short variant discovery (SNPs + Indels). https://gatk.broadinstitute.org/hc/en-us/articles/360035531192-RNAseq-short-variant-discovery-SNPs-Indels-

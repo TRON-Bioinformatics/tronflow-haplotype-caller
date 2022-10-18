@@ -1,11 +1,4 @@
-params.memory__haplotype_caller = "16g"
-params.cpus__haplotype_caller = 2
-params.dbsnp = false
-params.reference = false
-params.intervals = false
-params.ploidy = 2
-params.memory_haplotype_caller = "16g"
-params.cpus_haplotype_caller = 2
+params.use_soft_clipped_bases = false
 
 
 process HAPLOTYPE_CALLER {
@@ -17,21 +10,26 @@ process HAPLOTYPE_CALLER {
 
     input:
     tuple val(name), val(bam)
+    val(reference)
+    val(ploidy)
+    val(dbsnp)
+    val(intervals)
+    val(min_quality)
 
     output:
     tuple val("${name}"), file("${name}.hc.unfiltered.vcf"), val(bam), emit: unfiltered_vcfs
 
     script:
     inputs = bam.split(",").collect({v -> "--input $v"}).join(" ")
-    intervals_option = params.intervals ? "--intervals ${params.intervals}" : ""
-    dbsnp_option = params.dbsnp ? "--dbsnp ${params.dbsnp}" : ""
+    intervals_option = intervals ? "--intervals ${intervals}" : ""
+    dbsnp_option = dbsnp ? "--dbsnp ${dbsnp}" : ""
+    min_quality_option = min_quality ? "--standard-min-confidence-threshold-for-calling ${min_quality}" : ""
+    soft_clipped_bases_option = params.use_soft_clipped_bases ? "" : "--dont-use-soft-clipped-bases"
     """
-    gatk --java-options '-Xmx${params.memory__haplotype_caller}' HaplotypeCaller \
-    --reference ${params.reference} \
-    --sample-ploidy ${params.ploidy} \
-    ${intervals_option} \
-    ${dbsnp_option} \
-    ${inputs} \
+    gatk --java-options '-Xmx${params.memory_haplotype_caller}' HaplotypeCaller \
+    --reference ${reference} \
+    --sample-ploidy ${ploidy} \
+    ${soft_clipped_bases_option} ${intervals_option} ${min_quality_option} ${dbsnp_option} ${inputs} \
     --output ${name}.hc.unfiltered.vcf
     """
 }

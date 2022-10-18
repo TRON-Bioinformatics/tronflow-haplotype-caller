@@ -3,7 +3,7 @@
 nextflow.enable.dsl = 2
 
 include { HAPLOTYPE_CALLER } from './modules/01_haplotype_caller'
-include { VARIANT_ANNOTATOR; VARIANT_RECALIBRATOR; VQSR } from './modules/02_vqsr'
+include { VARIANT_ANNOTATOR; VARIANT_RECALIBRATOR; VQSR; VARIANT_FILTERING } from './modules/02_vqsr'
 
 params.help= false
 params.input_files = false
@@ -73,12 +73,17 @@ workflow {
         HAPLOTYPE_CALLER.out.unfiltered_vcfs)
 
     if (! params.skip_vqsr) {
+        // applies Variant Quality Score Recalibration
         VARIANT_RECALIBRATOR(VARIANT_ANNOTATOR.out.annotated_vcfs)
         VQSR(VARIANT_RECALIBRATOR.out.recalibration)
         final_vcfs = VQSR.out.final_vcfs
     }
     else {
-        final_vcfs = VARIANT_ANNOTATOR.out.annotated_vcfs
+        // applies hard filters on variant calling results
+        VARIANT_FILTERING(
+            VARIANT_ANNOTATOR.out.annotated_vcfs, 
+            params.reference)
+        final_vcfs = VARIANT_FILTERING.out.final_vcfs
     }
 
     final_vcfs.map {it.join("\t")}.collectFile(name: "${params.output}/hc_output_files.txt", newLine: true)

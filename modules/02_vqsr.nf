@@ -9,6 +9,20 @@ params.cpus_cnn_score_variants = 2
 params.memory_filter_variant_tranches = "16g"
 params.cpus_filter_variant_tranches = 2
 
+params.indels_hard_filters = """--cluster-window-size 35 \
+        --cluster-size 3 \
+        -filter "QD < 2.0" -filter-name "QD2" \
+        -filter "FS > 30.0" -filter-name "FS30" \
+        -filter "ReadPosRankSum < -20.0" -filter-name "ReadPosRankSum-20" """
+params.snvs_hard_filters = """--cluster-window-size 35 \
+        --cluster-size 3 \
+        -filter "QD < 2.0" -filter-name "QD2" \
+        -filter "FS > 30.0" -filter-name "FS30" \
+        -filter "SOR > 3.0" -filter-name "SOR3" \
+        -filter "MQ < 40.0" -filter-name "MQ40" \
+        -filter "MQRankSum < -12.5" -filter-name "MQRankSum-12.5" \
+        -filter "ReadPosRankSum < -8.0" -filter-name "ReadPosRankSum-8" """
+
 
 
 process VARIANT_ANNOTATOR {
@@ -93,5 +107,48 @@ process VQSR {
    --tranches-file ${tranches_file} \
    --recal-file ${recalibration_file} \
    --mode BOTH
+    """
+}
+
+process VARIANT_FILTERING {
+    cpus params.cpus_filter
+    memory params.memory_filter
+    tag "${name}"
+    publishDir "${params.output}/${name}", mode: "copy"
+
+    conda (params.enable_conda ? "bioconda::gatk4=4.2.0.0" : null)
+
+    input:
+    tuple val(name), file(vcf)
+    val(reference)
+
+    output:
+    tuple val("${name}"), file("${name}.hard_filters.vcf"), emit: final_vcfs
+
+    """
+    gatk SelectVariants \
+        -V ${vcf} \
+        -select-type SNP \
+        -O ${name}.snvs.vcf
+
+    gatk SelectVariants \
+        -V ${vcf} \
+        -select-type INDEL \
+        -O ${name}.indels.vcf
+
+    gatk VariantFiltration \
+        -V ${name}.indels.vcf \
+        ${params.indels_hard_filters} \
+        -O ${name}.filtered.indels.vcf
+
+    gatk VariantFiltration \
+        -V ${name}.snvs.vcf \
+        ${params.snvs_hard_filters} \
+        -O ${name}.filtered.snvs.vcf
+
+    gatk MergeVcfs \
+        -I ${name}.filtered.snvs.vcf \
+        -I ${name}.filtered.indels.vcf \
+        -O ${name}.hard_filters.vcf
     """
 }

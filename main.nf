@@ -61,8 +61,16 @@ if (params.input_files) {
 }
 
 workflow {
-    HAPLOTYPE_CALLER(input_files)
-    VARIANT_ANNOTATOR(HAPLOTYPE_CALLER.out.unfiltered_vcfs)
+
+    HAPLOTYPE_CALLER(
+        input_files, 
+        params.reference, 
+        params.ploidy,
+        params.dbsnp,
+        params.intervals)
+
+    VARIANT_ANNOTATOR(
+        HAPLOTYPE_CALLER.out.unfiltered_vcfs)
 
     if (! params.skip_vqsr) {
         VARIANT_RECALIBRATOR(VARIANT_ANNOTATOR.out.annotated_vcfs)

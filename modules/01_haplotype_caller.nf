@@ -24,7 +24,7 @@ process HAPLOTYPE_CALLER {
     intervals_option = intervals ? "--intervals ${intervals}" : ""
     dbsnp_option = dbsnp ? "--dbsnp ${dbsnp}" : ""
     min_quality_option = min_quality ? "--standard-min-confidence-threshold-for-calling ${min_quality}" : ""
-    soft_clipped_bases_option = use_soft_clipped_bases ? "" : "--dont-use-soft-clipped-bases"
+    soft_clipped_bases_option = params.use_soft_clipped_bases ? "" : "--dont-use-soft-clipped-bases"
     """
     gatk --java-options '-Xmx${params.memory_haplotype_caller}' HaplotypeCaller \
     --reference ${reference} \

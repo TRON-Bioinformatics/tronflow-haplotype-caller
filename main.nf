@@ -16,6 +16,7 @@ params.thousand_genomes = false
 params.intervals = false
 params.output = 'output'
 params.skip_vqsr = false
+params.min_quality = false
 
 
 def helpMessage() {
@@ -67,7 +68,8 @@ workflow {
         params.reference, 
         params.ploidy,
         params.dbsnp,
-        params.intervals)
+        params.intervals,
+        params.min_quality)
 
     VARIANT_ANNOTATOR(
         HAPLOTYPE_CALLER.out.unfiltered_vcfs)

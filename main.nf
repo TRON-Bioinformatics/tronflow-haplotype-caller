@@ -17,6 +17,7 @@ params.intervals = false
 params.output = 'output'
 params.skip_vqsr = false
 params.min_quality = false
+params.ploidy = 2
 
 
 def helpMessage() {

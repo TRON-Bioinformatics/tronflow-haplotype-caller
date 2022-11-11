@@ -29,7 +29,7 @@ process VARIANT_ANNOTATOR {
     cpus params.cpus_filter
     memory params.memory_filter
     tag "${name}"
-    publishDir params.skip_vqsr? "${params.output}/${name}" : "", mode: "copy"
+    publishDir "${params.output}/${name}", mode: "copy"
 
     conda (params.enable_conda ? "bioconda::gatk4=4.2.6.1" : null)
 
